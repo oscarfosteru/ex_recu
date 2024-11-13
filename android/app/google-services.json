@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "685635931124",
+    "project_id": "examen-408d3",
+    "storage_bucket": "examen-408d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685635931124:android:0b849b4c80e94ebd72c7a1",
+        "android_client_info": {
+          "package_name": "com.example.empty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhwIbO4P1jT61bLKrjHJ3A_LGWyng8GKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685635931124:android:98dc4ca7acb360f272c7a1",
+        "android_client_info": {
+          "package_name": "com.example.examen_oscar_barrios"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhwIbO4P1jT61bLKrjHJ3A_LGWyng8GKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
