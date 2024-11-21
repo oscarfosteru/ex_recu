@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:examen_oscar_barrios/modules/gastos/entities/gastos.dart';
-import 'package:examen_oscar_barrios/modules/widgets/details_gastos.dart';
-import 'package:examen_oscar_barrios/modules/widgets/list_gastos.dart';
-import 'package:examen_oscar_barrios/modules/gastos/screens/nuevo_gasto.dart';
+import 'package:examen_oscar_barrios/modules/autos/entities/autos.dart';
+import 'package:examen_oscar_barrios/modules/widgets/details_autos.dart';
+import 'package:examen_oscar_barrios/modules/widgets/list_autos.dart';
+import 'package:examen_oscar_barrios/modules/autos/screens/nuevo_auto.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -13,46 +13,25 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final db = FirebaseFirestore.instance;
-  List<Gasto> gastos = [];
+  List<Auto> autos = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchGastos();
-
-    // Corrección: Convertir precios a double en la carga inicial
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _convertPreciosToDouble();
-    });
+    _fetchAutos();
   }
 
-  Future<void> _convertPreciosToDouble() async {
+  Future<void> _fetchAutos() async {
     try {
-      final snapshot = await db.collection('gastos').get();
-      gastos = snapshot.docs.map((doc) {
-        final precio = (doc['precio'] is String)
-            ? double.tryParse(doc['precio']) ?? 0.0
-            : (doc['precio'] as num?)?.toDouble() ?? 0.0;
-        return Gasto(
-          descripcion: doc['descripcion'] ?? '',
-          precio: precio,
-        );
-      }).toList();
-      setState(() {});
-    } catch (e) {
-      print('Error converting precios: $e');
-    }
-  }
-
-  Future<void> _fetchGastos() async {
-    try {
-      db.collection('gastos').snapshots().listen((snapshot) {
-        gastos = snapshot.docs.map((doc) {
-          final precio = (doc['precio'] as num?)?.toDouble() ?? 0.0;
-          return Gasto(
-            descripcion: doc['descripcion'] ?? '',
-            precio: precio,
+      db.collection('autos').snapshots().listen((snapshot) {
+        autos = snapshot.docs.map((doc) {
+          return Auto(
+            numero_poliza: (doc['numero_poliza'] as num?)?.toDouble() ?? 0.0,
+            nombre: doc['nombre'] ?? '',
+            modelo: doc['modelo'] ?? '',
+            fecha_expiracion: (doc['fecha_expiracion'] as Timestamp).toDate(),
+            url_imagen: doc['url_imagen'] ?? '',
           );
         }).toList();
         setState(() {
@@ -60,12 +39,11 @@ class _HomeState extends State<Home> {
         });
       });
     } catch (e) {
-      print('Error fetching gastos: $e');
+      print('Error fetching autos: $e');
     }
   }
 
-
-  @override 
+  @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -75,26 +53,30 @@ class _HomeState extends State<Home> {
       appBar: AppBar(title: const Text('Home')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => NuevoGastoScreen())).then((newGasto) {
-            if (newGasto != null) {
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NuevoAutoScreen()))
+              .then((newAuto) {
+            if (newAuto != null) {
               // No es necesario actualizar el estado aquí, el StreamBuilder lo hace automáticamente
             }
           });
         },
         child: const Icon(Icons.add),
       ),
-      body: gastos.isEmpty
-          ? const Center(child: Text("No hay gastos registrados."))
+      body: autos.isEmpty
+          ? const Center(child: Text("No hay autos registrados."))
           : ListView.builder(
-              itemCount: gastos.length,
+              itemCount: autos.length,
               itemBuilder: (context, index) {
-                final gasto = gastos[index];
+                final auto = autos[index];
                 return InkWell(
                   onTap: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => DetailsGasto(gasto: gasto)));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DetailsAuto(auto: auto)));
                   },
-                  child: ListGasto(gasto: gasto),
+                  child: ListAuto(auto: auto),
                 );
               },
             ),
